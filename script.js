@@ -6,10 +6,10 @@ const gDBCitiesApiKey = "57b3727e23msh192554544a0e32dp1cabd6jsnbf7625af0664";
 
 
 function convertDateTime(date, time) {
-    // Converts user-input date and time to unix timestamp for https://api.wheretheiss.at/v1/satellites/25544/positions endpoint 'timestamp' parameter
-    // i.e. https://api.wheretheiss.at/v1/satellites/25544/positions?timestamps=1596133200&units=miles
-    console.log(`'convertDateTime' ran, returned placeholder`);
-    return 1596133200;
+    console.log(`'convertDateTime' ran`);
+    unixTimestamp = new Date(`${date}T${time}`).getTime() / 1000;
+    console.log(unixTimestamp);
+    return unixTimestamp;
 }
 
 function generateISSURL(searchTimestamp) {
@@ -22,10 +22,15 @@ function generateISSURL(searchTimestamp) {
     }
 }
 
-function getCoordinates(data) {
+function getNearestCity(lat, lon) {
+    
+}
+
+function generateCoordinates(data) {
     const lat = data.latitude;
     const lon = data.longitude;
     console.log(`The ISS coordinates are ${lat}, ${lon}`);
+    getNearestCity(lat, lon);
 }
 
 function getPosition(searchTimestamp) {
@@ -34,7 +39,7 @@ function getPosition(searchTimestamp) {
     console.log(ISSURL);
     fetch(ISSURL)
     .then(response => response.json())
-    .then(responseJson => getCoordinates(responseJson));
+    .then(responseJson => generateCoordinates(responseJson));
 }
 
 function watchForm() {
@@ -48,8 +53,8 @@ function watchForm() {
         console.log(`'later' clicked`)
         const searchDate = $('#date').val();
         const searchTime = $('#time').val();
-        const searchTimestamp = convertDateTime(searchDate, searchTime);
-        getPosition(searchTimestamp);
+        const unixTimestamp = convertDateTime(searchDate, searchTime);
+        getPosition(unixTimestamp);
     })
 }
 
