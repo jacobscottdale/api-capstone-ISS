@@ -1,28 +1,30 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang='en'>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
     <title>Travel the World Aboard the ISS</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
-    <link rel="stylesheet" href="main.css">
+    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css'>
+    <link rel='stylesheet' href='main.css'>
 </head>
 <body>
     <main>
         <section id='search'>
-            <h1>Welcome aboard the International Space Station Airlines Passenger Beta</h1>
+            <h1>Welcome aboard the International Space Station Airlines Beta</h1>
             <form id='iss-location-search'>
-                <label for="now-button">Where over the Earth are we right now?</label>
+                <label for='now-button'>Where over the Earth are we right now?</label>
                 <button type='button' id='now-button'>Now</button>
                 <p>OR</p>
                 <p>Pick a future time:</p>
-                <input type="date" name="date" id="date" >
-                <input type="time" name="time" id="time" >
+                <input type='date' name='date' id='date' >
+                <input type='time' name='time' id='time' >
                 <button type='submit' id='later-button'>Later</button>
             </form>
         </section>
         <section id='results'>
-
+            <p id='results-message'></p>
+            <img src='' id ='country-flag' alt='' SameSite='none' Secure>
+            <p id='country-desc'></p>
         </section>
     </main>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js'></script>
