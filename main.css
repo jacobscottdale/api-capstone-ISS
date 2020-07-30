@@ -1,3 +1,50 @@
 button {
     display: block;
 }
+
+.flex-group {
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    margin: 20px;
+}
+
+.small-text {
+    font-size: 10px;
+}
+
+button {
+    background-color: black;
+    color: white;
+    border: none;
+    text-decoration: none;
+}
+
+img {
+    border: 1px gray solid;
+}
+
+.flex-1 {
+    flex: 2;
+}
+
+.flex-2 {
+    flex: 3;
+}
+
+@media all and (min-width: 400px) {
+
+}
+
+@media all and (min-width: 800px) {
+    .flex-group {
+        flex-direction: row;
+    }
+    
+    main {
+        margin-left: 50px;
+        margin-right: 50px;
+    }
+}
