@@ -1,42 +1,42 @@
+let tense = '';
+let currentTime;
+let ISSLocation = {};
 
 function displayResults(locationData) {
     console.log(locationData);
-    $('#results-message').html(
-        `<p>The ISS is ${locationData.distance}km away* from ${locationData.city}, ${locationData.country}</p>
-        <p class='small-text'>*and a few hundred kilometers above</p>`
-    );
-
-    //$('#city-image').attr('src', locationData.flagURL);
-    //$('#city-image').attr('alt', `${locationData.country} image`);
-    //$('#city-desc').text(locationData.description);
+    if (ISSLocation.isWater) {
+        $('#results-message').html(
+            `<p>The ISS ${tense} over the ocean at this time, but it ${tense} ${locationData.distance}km away* from ${locationData.city}, ${locationData.country}</p>
+            <p class='small-text'>*and a few hundred kilometers above</p>`
+        );
+    }
+    else {
+        $('#results-message').html(
+            `<p>The ISS ${tense} ${locationData.distance}km away* from ${locationData.city}, ${locationData.country}</p>
+            <p class='small-text'>*and a few hundred kilometers above</p>`
+        );
+    }
     $('#country-flag').attr('src', locationData.flagURL);
     $('#country-flag').attr('alt', `${locationData.country} flag`);
     $('#country-desc').text(locationData.description);
-
+    $('#content-link').attr('href', locationData.contentURL);
+    console.log(ISSLocation.isWater);
+    showHide();
 }
 
 function storeLocationData(countryWikiJson, cityData) {
     console.log(`'storeLocationData' ran`);
     console.log(countryWikiJson);
     const locationData = {
-        city : cityData.city,
-        distance : cityData.distance,
-        country : countryWikiJson.title,
-        flagURL : countryWikiJson.thumbnail.source,
-        description : countryWikiJson.extract,
-        contentURL : countryWikiJson.content_urls.desktop.page
+        city: cityData.city,
+        distance: cityData.distance,
+        country: countryWikiJson.title,
+        flagURL: countryWikiJson.thumbnail.source,
+        description: countryWikiJson.extract,
+        contentURL: countryWikiJson.content_urls.desktop.page
     };
     displayResults(locationData);
 }
-
-//function getCityWiki(countryWikiJson, cityData) {
-//   console.log(`'getCityWiki' ran`);
-//    const cityWikiURL = `https://en.wikipedia.org/api/rest_v1/page/summary/${cityData.city.split(' ').join('_').split('"').join('')}, ${cityData.country.split(' ').join('_').split('"').join('')}`;
-//    console.log(cityWikiURL);
-//    fetch(cityWikiURL)
-//        .then(cityWiki => cityWiki.json())
-//        .then(cityWikiJson => storeLocationData(countryWikiJson, cityData));
-//}
 
 function getCountryWiki(cityData) {
     console.log(`'getCountryWiki' ran`);
@@ -44,15 +44,21 @@ function getCountryWiki(cityData) {
     fetch(wikiURL)
         .then(countryWiki => {
             if (countryWiki.ok) {
-            return countryWiki.json();
+                return countryWiki.json();
             }
             throw new Error(countryWiki.statusText);
         })
         .then(countryWikiJson => storeLocationData(countryWikiJson, cityData))
         .catch(err => {
-            $('#results-message').text('Something went wrong. Try again!')
+            showHide();
+            $('#results').html(
+                `<div id='results-message'>Sorry, something went wrong. Try again!</div>
+            <div id='results-content'>
+                <img src='' id='country-flag' alt=''>
+                <p id='country-desc'></p>
+                <a id='content-link' href=''>Read more</a>
+            </div>`);
         });
-    
 }
 
 function storeCityData(nearbyCitiesDataJson) {
@@ -80,21 +86,72 @@ function getNearestCity(lat, lon) {
     fetch(nearestCityURL, options)
         .then(nearbyCitiesData => {
             if (nearbyCitiesData.ok) {
-            return nearbyCitiesData.json();
+                return nearbyCitiesData.json();
             }
             throw new Error(nearbyCitiesData.statusText);
         })
         .then(nearbyCitiesDataJson => storeCityData(nearbyCitiesDataJson))
         .catch(err => {
-            $('#results-message').text('Something went wrong. Try again!')
+            showHide();
+            $('#results-message').text('Something went wrong. Try again!');
         });
 }
 
-function convertDateTime(date, time) {
-    console.log(`'convertDateTime' ran`);
-    unixTimestamp = new Date(`${date}T${time}`).getTime() / 1000;
-    console.log(unixTimestamp);
-    return unixTimestamp;
+function determineTense(searchTimestamp) {
+    console.log('determineTense ran');
+    console.log(searchTimestamp);
+    console.log(currentTime);
+    if (searchTimestamp < currentTime) {
+        tense = 'was';
+    }
+    else if (searchTimestamp > currentTime) {
+        tense = 'will be';
+    }
+    else {
+        tense = 'is';
+    }
+    console.log(tense);
+}
+
+function updateISSLocation(isWaterJson) {
+    console.log(isWaterJson);
+    ISSLocation = {
+        lat: isWaterJson.lat,
+        lon: isWaterJson.lon,
+        isWater: isWaterJson.water
+    };
+    console.log(ISSLocation);
+    getNearestCity(ISSLocation.lat, ISSLocation.lon);
+}
+
+function determineOverWater(lat, lon) {
+    const api_key = 'uMcb1fNa4_dyFbyYcd1y';
+    const waterURL = `https://api.onwater.io/api/v1/results/${lat},${lon}?access_token=${api_key}`;
+    fetch(waterURL)
+        .then(isWater => {
+            if(isWater.ok) {
+                return isWater.json();
+            }
+            throw new Error(isWater.statusText)
+        })
+        .then(isWaterJson => updateISSLocation(isWaterJson))
+        .catch(err => {
+            console.log('something went wrong with determineOverWater');
+        });
+}
+
+function showHide() {
+    $('#landing-section').addClass('hidden');
+    $('.form-results').removeClass('hidden');
+}
+
+function generateCoordinates(searchTimestamp, ISSData) {
+    console.log(ISSData);
+    const lat = ISSData.latitude.toFixed(6);
+    const lon = ISSData.longitude.toFixed(6);
+    console.log(`The ISS coordinates are ${lat}, ${lon}`);
+    determineOverWater(lat, lon);
+    determineTense(searchTimestamp);
 }
 
 function generateISSURL(searchTimestamp) {
@@ -107,40 +164,55 @@ function generateISSURL(searchTimestamp) {
     }
 }
 
-function generateCoordinates(ISSData) {
-    console.log(ISSData);
-    const lat = ISSData.latitude.toFixed(6);
-    const lon = ISSData.longitude.toFixed(6);
-    console.log(`The ISS coordinates are ${lat}, ${lon}`);
-    getNearestCity(lat, lon);
-}
-
 function getPosition(searchTimestamp) {
     console.log(`'getPosition' ran`);
-    ISSURL = generateISSURL(searchTimestamp);
+    const ISSURL = generateISSURL(searchTimestamp);
     console.log(ISSURL);
     fetch(ISSURL)
         .then(ISSData => {
             if (ISSData.ok) {
-            return ISSData.json();
+                return ISSData.json();
             }
             throw new Error(ISSData.statusText);
         })
-        .then(ISSDataJson => generateCoordinates(ISSDataJson))
+        .then(ISSDataJson => generateCoordinates(searchTimestamp, ISSDataJson))
         .catch(err => {
+            showHide();
             $('#results-message').text('Something went wrong. Try again!')
         });
 }
 
+function convertDateTime(date, time) {
+    console.log(`'convertDateTime' ran`);
+    unixTimestamp = new Date(`${date}T${time}`).getTime() / 1000;
+    console.log(unixTimestamp);
+    return unixTimestamp;
+}
+
+function logCurrentTime() {
+    currentTime = Math.floor(Date.now() / 1000);
+    console.log(`the current time is ${currentTime}`);
+}
+
 function watchForm() {
+    $('#landing-now-button').on('click', function () {
+        logCurrentTime();
+        console.log(`'landing-now' clicked`);
+        tense = 'is';
+        getPosition(currentTime);
+    })
+
     $('#now-button').on('click', function () {
+        logCurrentTime();
         console.log(`'now' clicked`);
-        getPosition(false);
+        tense = 'is';
+        getPosition(currentTime);
     })
 
     $('#iss-location-search').submit(event => {
         event.preventDefault();
-        console.log(`'later' clicked`)
+        console.log(`'later' clicked`);
+        logCurrentTime();
         const searchDate = $('#date').val();
         const searchTime = $('#time').val();
         const unixTimestamp = convertDateTime(searchDate, searchTime);

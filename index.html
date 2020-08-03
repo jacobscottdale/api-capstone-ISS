@@ -10,36 +10,36 @@
 </head>
 
 <body>
-    <main class='flex-group'>
-        <section id='search' class='flex-item flex-1'>
+    <main>
+        <section id='landing-section' class=''>
             <h1>Travel the world aboard the International Space Station</h1>
             <h2>Traverse the Earth in only 90 minutes!</h2>
-            <form id='iss-location-search'>
-                <label for='now-button'>Find out where over the Earth is the ISS is either</label>
-                <button type='button' id='now-button' name='now-button'>Now</button>
-                <p>OR</p>
-                <label for='date time'>Pick a time:</label>
-                <input type='date' name='date' id='date' required>
-                <input type='time' name='time' id='time' required>
-                <button type='submit' id='later-button'>Submit</button>
-            </form>
+            <label for='now-button'>Ready to explore?</label>
+                    <button type='button' id='landing-now-button' name='landing-now-button'>Now</button>
         </section>
-        <section id='results' class='flex-item flex-2'>
-            <div id='results-message'></div>
-            <div id='results-content'>
-                <!--
-                <div id='city-results'>
-                    <img src="" id='city-image' alt="">
-                    <p id='city-desc'></p>
-                </div>
-                -->
-                <div id='country-results'>
+        <div class='form-results flex-group flex-column hidden'>
+            <section id='search' class='flex-item flex-1'>
+                <form id='iss-location-search'>
+                    <label for='now-button'>Find out where over the Earth the ISS is, either</label>
+                    <button type='button' id='now-button' name='now-button'>Now</button>
+                        <p>OR</p>
+                        <label for='date time'>Pick a time:</label>
+                        <input type='date' name='date' id='date' min="1998-11-21" required>
+                        <input type='time' name='time' id='time' required>
+                        <button type='submit' id='later-button'>Submit</button>
+                    
+                </form>
+            </section>
+            <section id='results' class='flex-item flex-2'>
+                <div id='results-message'></div>
+                <div id='results-content'>
                     <img src='' id='country-flag' alt=''>
                     <p id='country-desc'></p>
+                    <a id='content-link' href=''>Read more</a>
                 </div>
-            </div>
 
-        </section>
+            </section>
+        </div>
     </main>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js'></script>
     <script src='script.js'></script>
