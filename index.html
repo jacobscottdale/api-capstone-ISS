@@ -6,28 +6,34 @@
     <meta name='viewport' content='width=device-width, initial-scale=1.0'>
     <title>Travel the World Aboard the ISS</title>
     <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css'>
+    <link href="https://fonts.googleapis.com/css2?family=Lato&display=swap" rel="stylesheet">
     <link rel='stylesheet' href='main.css'>
 </head>
 
 <body>
     <main>
-        <section id='landing-section' class=''>
-            <h1>Travel the world aboard the International Space Station</h1>
-            <h2>Traverse the Earth in only 90 minutes!</h2>
-            <label for='now-button'>Ready to explore?</label>
-                    <button type='button' id='landing-now-button' name='landing-now-button'>Now</button>
+        <section id='landing-section' class='flex-group'>
+            <div class='flex-item flex-1'>
+                <label for='now-button'>Ready to explore?</label>
+                <button type='button' id='landing-now-button' name='landing-now-button'>Where is the ISS?</button>
+            </div>
+            <div class='flex-item flex-2'>
+                <h1>Travel the world aboard the International Space Station</h1>
+                <h2>Traverse the Earth in only 90 minutes!</h2>
+            </div>
+            
         </section>
-        <div class='form-results flex-group flex-column hidden'>
+        <div class='form-results flex-group hidden'>
             <section id='search' class='flex-item flex-1'>
                 <form id='iss-location-search'>
                     <label for='now-button'>Find out where over the Earth the ISS is, either</label>
                     <button type='button' id='now-button' name='now-button'>Now</button>
-                        <p>OR</p>
-                        <label for='date time'>Pick a time:</label>
-                        <input type='date' name='date' id='date' min="1998-11-21" required>
-                        <input type='time' name='time' id='time' required>
-                        <button type='submit' id='later-button'>Submit</button>
-                    
+                    <p>OR</p>
+                    <label for='date time'>Pick a date and time:</label>
+                    <input type='date' name='date' id='date' min="1998-11-21" required>
+                    <input type='time' name='time' id='time' required>
+                    <button type='submit' id='later-button'>Submit</button>
+
                 </form>
             </section>
             <section id='results' class='flex-item flex-2'>

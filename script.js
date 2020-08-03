@@ -2,11 +2,18 @@ let tense = '';
 let currentTime;
 let ISSLocation = {};
 
+function scrollToResults() {
+    console.log('scrolling');
+    $([document.documentElement, document.body]).animate({
+        scrollTop: $("#results").offset().top
+    }, 700);
+}
+
 function displayResults(locationData) {
     console.log(locationData);
     if (ISSLocation.isWater) {
         $('#results-message').html(
-            `<p>The ISS ${tense} over the ocean at this time, but it ${tense} ${locationData.distance}km away* from ${locationData.city}, ${locationData.country}</p>
+            `<h3>The ISS ${tense} over the ocean at this time, but it ${tense} ${locationData.distance}km away from* ${locationData.city}, ${locationData.country}</h3>
             <p class='small-text'>*and a few hundred kilometers above</p>`
         );
     }
@@ -22,6 +29,7 @@ function displayResults(locationData) {
     $('#content-link').attr('href', locationData.contentURL);
     console.log(ISSLocation.isWater);
     showHide();
+    scrollToResults();
 }
 
 function storeLocationData(countryWikiJson, cityData) {
@@ -141,6 +149,7 @@ function determineOverWater(lat, lon) {
 }
 
 function showHide() {
+    console.log('hiding landing-section')
     $('#landing-section').addClass('hidden');
     $('.form-results').removeClass('hidden');
 }

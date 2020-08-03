@@ -1,13 +1,37 @@
+html {
+    font-family: "Lato";
+    background-color: aliceblue;
+}
+
+#search {
+    margin-bottom: 60px;
+}
+
+h2 {
+    margin: 0 0 75px 0;
+}
+
+h3 {
+    margin: 0;
+}
+
 a {
     text-decoration: none;
 }
 
-button {
-    display: block;
+#results {
+    margin-bottom: 60px;
 }
 
 label {
     display: block;
+    font-size: 20px;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+input {
+    margin-bottom: 10px;
 }
 
 .flex-group {
@@ -15,8 +39,13 @@ label {
     flex-direction: column;
 }
 
+#landing-section.flex-group {
+    flex-direction: column-reverse;
+}
+
 main {
     margin: 20px;
+    padding-top: 20px;
 }
 
 .small-text {
@@ -24,15 +53,23 @@ main {
 }
 
 button {
+    font-size: 20px;
+    display: block;
     background-color: black;
     color: white;
     border: none;
     text-decoration: none;
+    padding: 10px 30px;
+    margin: 0 auto;
 }
 
 img {
-    border: 1px gray solid;
+    border: 1px #efefef solid;
     max-width: 90%;
+}
+
+form p {
+    text-align: center;
 }
 
 .flex-1 {
@@ -47,10 +84,13 @@ img {
     display: none;
 }
 
-@media all and (min-width: 400px) {
+@media all and (min-width: 500px) {
 main {
     width: 400px;
+    margin-right: 10px;
+    margin-left: 80px;
 }
+
 }
 
 @media all and (min-width: 800px) {
@@ -62,5 +102,18 @@ main {
         width: auto;
         margin-left: 50px;
         margin-right: 50px;
+    }
+
+    button {
+        margin-left: 0;
+    }
+
+    form p {
+        margin: 80px 0;
+        text-align: left;
+    }
+
+    label {
+        text-align: left;
     }
 }
