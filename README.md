@@ -17,4 +17,4 @@ Results Page:
 * jQuery
 
 ## Demo
-- [GitHub Pages site](https://jacobscottdale.github.io/api-capstone-ISS/)
+- [GitHub Pages site](https://jacobscottdale.github.io/iss-locator.io/)
