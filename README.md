@@ -7,7 +7,12 @@ This app allows users to see the nearest city and country to the coordinates of 
 ## Screenshots
 Landing Page:
 
+![landing page](screenshots/landing-page.png)
+
 Results Page:
+
+![results first view](screenshots/results1.png)
+![results second view](screenshots/results2.png)
 
 ## Built with
 
