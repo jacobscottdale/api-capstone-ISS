@@ -1,19 +1,23 @@
+// tense will hold was/is/will be respective to the user-selected time
 let tense = '';
+// currentTime will hold the time at the moment the user presses the button
 let currentTime;
+// will store information on the ISS from multiple APIs
 let ISSLocation = {};
 
+// Page will scroll to the results when they render-- intended for mobile displays
 function scrollToResults() {
-    console.log('scrolling');
     $([document.documentElement, document.body]).animate({
         scrollTop: $("#results").offset().top
     }, 700);
 }
 
+// Renders the information received from APIs
 function displayResults(locationData) {
-    console.log(locationData);
+    // If the ISS is above a body of water, the user is notified in the results-message
     if (ISSLocation.isWater) {
         $('#results-message').html(
-            `<h3>The ISS ${tense} over the ocean at this time, but it ${tense} ${locationData.distance}km away from* ${locationData.city}, ${locationData.country}</h3>
+            `<h3>The ISS ${tense} over the ocean or a body of water at this time, but it ${tense} ${locationData.distance}km away from* ${locationData.city}, ${locationData.country}</h3>
             <p class='small-text'>*and a few hundred kilometers above</p>`
         );
     }
@@ -23,18 +27,23 @@ function displayResults(locationData) {
             <p class='small-text'>*and a few hundred kilometers above</p>`
         );
     }
+    // Renders the image associated with the country from wikimedia
     $('#country-flag').attr('src', locationData.flagURL);
     $('#country-flag').attr('alt', `${locationData.country} flag`);
+    // Renders country description from wikimedia
     $('#country-desc').text(locationData.description);
+    // Renders a link for user to read more about the country on Wikipedia.org
     $('#content-link').attr('href', locationData.contentURL);
-    console.log(ISSLocation.isWater);
+    // Reveals the results
     showHide();
-    scrollToResults();
+    // If user is on a mobile display, page will scroll to the results
+    if (screen.width < 800) {
+        scrollToResults();
+    }
 }
 
+// Stores information about the city and country
 function storeLocationData(countryWikiJson, cityData) {
-    console.log(`'storeLocationData' ran`);
-    console.log(countryWikiJson);
     const locationData = {
         city: cityData.city,
         distance: cityData.distance,
@@ -43,11 +52,12 @@ function storeLocationData(countryWikiJson, cityData) {
         description: countryWikiJson.extract,
         contentURL: countryWikiJson.content_urls.desktop.page
     };
+    // Call render function
     displayResults(locationData);
 }
 
+// Fetches information about the country from wikimedia API
 function getCountryWiki(cityData) {
-    console.log(`'getCountryWiki' ran`);
     const wikiURL = `https://en.wikipedia.org/api/rest_v1/page/summary/${cityData.country.split(' ').join('_').split('"').join('')}`;
     fetch(wikiURL)
         .then(countryWiki => {
@@ -58,6 +68,7 @@ function getCountryWiki(cityData) {
         })
         .then(countryWikiJson => storeLocationData(countryWikiJson, cityData))
         .catch(err => {
+            // Reveals the results section so the error message can display for user
             showHide();
             $('#results').html(
                 `<div id='results-message'>Sorry, something went wrong. Try again!</div>
@@ -69,20 +80,19 @@ function getCountryWiki(cityData) {
         });
 }
 
+// Records the nearest city, country and its distance from the ISS coordinates
 function storeCityData(nearbyCitiesDataJson) {
-    console.log(`'storeCityData' ran`);
-    console.log(nearbyCitiesDataJson);
     const cityData = {
         city: nearbyCitiesDataJson[0].City,
         country: nearbyCitiesDataJson[0].Country,
         distance: Math.floor(nearbyCitiesDataJson[0].Distance / 1000)
     };
-    console.log(`${cityData.city}, ${cityData.country} is ${cityData.distance}km away`);
+    // Pass nearest city, country to wikimedia API
     getCountryWiki(cityData);
 }
 
+// Finds the nearest city to the ISS coordinates from the geocode API
 function getNearestCity(lat, lon) {
-    console.log(`'getNearestCity' ran`);
     const nearestCityURL = `https://geocodeapi.p.rapidapi.com/GetNearestCities?latitude=${lat}&longitude=${lon}&range=0`;
     const options = {
         "method": "GET",
@@ -100,38 +110,39 @@ function getNearestCity(lat, lon) {
         })
         .then(nearbyCitiesDataJson => storeCityData(nearbyCitiesDataJson))
         .catch(err => {
+            // Reveals the results section so the error message can display for user
             showHide();
             $('#results-message').text('Something went wrong. Try again!');
         });
 }
 
+// Chooses appropriate tense for past, present and future
 function determineTense(searchTimestamp) {
-    console.log('determineTense ran');
-    console.log(searchTimestamp);
-    console.log(currentTime);
+    // past
     if (searchTimestamp < currentTime) {
         tense = 'was';
     }
+    // future
     else if (searchTimestamp > currentTime) {
         tense = 'will be';
     }
+    // present
     else {
         tense = 'is';
     }
-    console.log(tense);
 }
 
+// Stores ISS coordinates and whether it is above water or not
 function updateISSLocation(isWaterJson) {
-    console.log(isWaterJson);
     ISSLocation = {
         lat: isWaterJson.lat,
         lon: isWaterJson.lon,
         isWater: isWaterJson.water
     };
-    console.log(ISSLocation);
     getNearestCity(ISSLocation.lat, ISSLocation.lon);
 }
 
+// Finds out if the ISS is above water or land using the onwater API
 function determineOverWater(lat, lon) {
     const api_key = 'uMcb1fNa4_dyFbyYcd1y';
     const waterURL = `https://api.onwater.io/api/v1/results/${lat},${lon}?access_token=${api_key}`;
@@ -144,39 +155,39 @@ function determineOverWater(lat, lon) {
         })
         .then(isWaterJson => updateISSLocation(isWaterJson))
         .catch(err => {
-            console.log('something went wrong with determineOverWater');
+            console.log('Something went wrong with onwater API. Try again!');
         });
 }
 
+// Function to hide initial landing page and reveal the results section
 function showHide() {
-    console.log('hiding landing-section')
     $('#landing-section').addClass('hidden');
     $('.form-results').removeClass('hidden');
 }
 
+// Formats coordinates for use as API parameters
 function generateCoordinates(searchTimestamp, ISSData) {
-    console.log(ISSData);
     const lat = ISSData.latitude.toFixed(6);
     const lon = ISSData.longitude.toFixed(6);
-    console.log(`The ISS coordinates are ${lat}, ${lon}`);
     determineOverWater(lat, lon);
     determineTense(searchTimestamp);
 }
 
+// This function provides API URL depending on whether user selects "now" or their own date and time
 function generateISSURL(searchTimestamp) {
-    console.log(`Generating ISS API URL`);
+    // past/future date and time
     if (searchTimestamp) {
         return `https://api.wheretheiss.at/v1/satellites/25544?timestamp=${searchTimestamp}`;
     }
+    // current date and time
     else {
         return `https://api.wheretheiss.at/v1/satellites/25544`;
     }
 }
 
+// Determines ISS coordinates by calling ISS API
 function getPosition(searchTimestamp) {
-    console.log(`'getPosition' ran`);
     const ISSURL = generateISSURL(searchTimestamp);
-    console.log(ISSURL);
     fetch(ISSURL)
         .then(ISSData => {
             if (ISSData.ok) {
@@ -186,41 +197,44 @@ function getPosition(searchTimestamp) {
         })
         .then(ISSDataJson => generateCoordinates(searchTimestamp, ISSDataJson))
         .catch(err => {
+            // Reveals the results section so the error message can display for user
             showHide();
             $('#results-message').text('Something went wrong. Try again!')
         });
 }
 
+// Converts user input date and time to a unix timestamp format for use as API parameter
 function convertDateTime(date, time) {
-    console.log(`'convertDateTime' ran`);
     unixTimestamp = new Date(`${date}T${time}`).getTime() / 1000;
-    console.log(unixTimestamp);
     return unixTimestamp;
 }
 
+// Stores the current time as a unix timestamp
 function logCurrentTime() {
     currentTime = Math.floor(Date.now() / 1000);
-    console.log(`the current time is ${currentTime}`);
 }
 
+// Event listener, waiting for user to interact with buttons
 function watchForm() {
+    // Only input option on the landing page
     $('#landing-now-button').on('click', function () {
         logCurrentTime();
-        console.log(`'landing-now' clicked`);
         tense = 'is';
         getPosition(currentTime);
     })
 
+    // One of two options once user has received their first results
+    // Will call for the present time
     $('#now-button').on('click', function () {
         logCurrentTime();
-        console.log(`'now' clicked`);
         tense = 'is';
         getPosition(currentTime);
     })
 
+    // Second option once user has received their first results
+    // Will call for a past or future date and time
     $('#iss-location-search').submit(event => {
         event.preventDefault();
-        console.log(`'later' clicked`);
         logCurrentTime();
         const searchDate = $('#date').val();
         const searchTime = $('#time').val();
