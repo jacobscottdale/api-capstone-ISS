@@ -46,6 +46,30 @@ label {
     text-align: center;
 }
 
+.inline-labels {
+    display: flex;
+    align-items: center;
+}
+
+.inline-labels div {
+    display: inline;
+    margin: 0 auto 10px auto;
+}
+
+.inline-labels label {
+    display: inline;
+}
+
+.input-date-time {
+    display: flex;
+}
+
+.date-time-container {
+    display: flex;
+    flex-direction: column;
+    margin: auto;
+}
+
 button {
     font-size: 20px;
     display: block;
@@ -61,6 +85,8 @@ button {
 input {
     margin-bottom: 10px;
     border-radius: 4px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .small-text {
@@ -100,11 +126,17 @@ img {
     line-height: 1.6;
 }
 
-@media all and (min-width: 500px) {
+@media all and (min-width: 300px) {
+    .date-time-container {
+        flex-direction: row;
+    }
+}
+
+@media all and (min-width:  440px) {
 main {
     width: 400px;
-    margin-right: 10px;
-    margin-left: 80px;
+    margin-right: auto;
+    margin-left: auto;
 }
 
 }
@@ -136,6 +168,10 @@ main {
 
     label {
         text-align: left;
+    }
+
+    .date-time-container {
+        margin: 0;
     }
 
 }

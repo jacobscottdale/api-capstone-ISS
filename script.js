@@ -23,7 +23,7 @@ function displayResults(locationData) {
     }
     else {
         $('#results-message').html(
-            `<p>The ISS ${tense} ${locationData.distance}km away* from ${locationData.city}, ${locationData.country}</p>
+            `<h3>The ISS ${tense} ${locationData.distance}km away* from ${locationData.city}, ${locationData.country}</h3>
             <p class='small-text'>*and a few hundred kilometers above</p>`
         );
     }
