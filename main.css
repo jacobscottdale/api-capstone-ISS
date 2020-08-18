@@ -87,6 +87,7 @@ input {
     border-radius: 4px;
     margin-left: auto;
     margin-right: auto;
+    background-color: white;
 }
 
 .small-text {
@@ -172,6 +173,11 @@ main {
 
     .date-time-container {
         margin: 0;
+    }
+
+    .inline-labels div {
+        margin: 0 0 10px 0;
+        
     }
 
 }
