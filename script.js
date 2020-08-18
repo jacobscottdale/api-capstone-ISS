@@ -34,6 +34,8 @@ function displayResults(locationData) {
     $('#country-desc').text(locationData.description);
     // Renders a link for user to read more about the country on Wikipedia.org
     $('#content-link').attr('href', locationData.contentURL);
+    // Reverts cursor back to default
+    showCursorLoader(false);
     // Reveals the results
     showHide();
     // If user is on a mobile display, page will scroll to the results
@@ -214,10 +216,23 @@ function logCurrentTime() {
     currentTime = Math.floor(Date.now() / 1000);
 }
 
+// If loading is true, cursor changes to a loading cursor
+// If loading is false, cursor reverts to default cursor
+function showCursorLoader(loading) {
+    console.log('showCursorLoader running');
+    if (loading) {
+        $('body').css('cursor', 'progress');
+    }
+    else {
+        $('body').css('cursor', 'default');
+    }
+}
+
 // Event listener, waiting for user to interact with buttons
 function watchForm() {
     // Only input option on the landing page
     $('#landing-now-button').on('click', function () {
+        showCursorLoader(true);
         logCurrentTime();
         tense = 'is';
         getPosition(currentTime);
@@ -226,6 +241,7 @@ function watchForm() {
     // One of two options once user has received their first results
     // Will call for the present time
     $('#now-button').on('click', function () {
+        showCursorLoader(true);
         logCurrentTime();
         tense = 'is';
         getPosition(currentTime);
@@ -235,6 +251,7 @@ function watchForm() {
     // Will call for a past or future date and time
     $('#iss-location-search').submit(event => {
         event.preventDefault();
+        showCursorLoader(true);
         logCurrentTime();
         const searchDate = $('#date').val();
         const searchTime = $('#time').val();
